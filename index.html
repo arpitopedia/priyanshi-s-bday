@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>✨ Priyanshi · 18th from afar ✨</title>
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 30%, #ffe6f0, #d9e8ff, #f3d9f1);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      scroll-behavior: smooth;
+    }
+
+    /* dark mode - improved contrast & soft glow */
+    body.dark-mode {
+      background: radial-gradient(circle at 20% 30%, #251e28, #1b212f, #241d26);
+      color: #f3e3f0;
+    }
+    body.dark-mode .glass-card,
+    body.dark-mode .flip-card-modern .flip-front,
+    body.dark-mode .flip-card-modern .flip-back,
+    body.dark-mode .gift-box-real,
+    body.dark-mode .balloon-modern,
+    body.dark-mode .insta-card,
+    body.dark-mode #countdownTimer,
+    body.dark-mode #yesBtn, 
+    body.dark-mode #noBtn {
+      background: rgba(40, 30, 48, 0.8) !important;
+      backdrop-filter: blur(16px);
+      border-color: #aa79b3 !important;
+      color: #ffe5f5 !important;
+      box-shadow: 0 20px 30px -10px #1a0f1a, 0 0 0 1px #c88ec0 inset;
+    }
+    body.dark-mode h1, 
+    body.dark-mode h2, 
+    body.dark-mode h3 {
+      color: #ffcce6;
+      text-shadow: 0 0 8px #d9a6d9;
+    }
+    body.dark-mode button:not(#darkToggle):not(#shareBtn):not(#yesBtn):not(#noBtn) {
+      background: #a86fa3;
+      box-shadow: 0 8px 0 #633b61, 0 12px 28px #a85b8a;
+      color: #ffedfa;
+    }
+    body.dark-mode .music-toggle {
+      background: #3f2b3bcc;
+      border-color: #b392c0;
+    }
+    /* surprise cover dark mode */
+    body.dark-mode #surpriseCover {
+      background: rgba(20, 12, 24, 0.95);
+      backdrop-filter: blur(12px);
+    }
+    body.dark-mode .cover-content {
+      background: rgba(70, 40, 65, 0.7);
+      border-color: #d9a6d9;
+    }
+
+    /* floating objects */
+    .floating-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .float-item {
+      position: absolute;
+      opacity: 0.35;
+      animation: float 20s infinite alternate ease-in-out;
+      font-size: 2.4rem;
+      user-select: none;
+      filter: drop-shadow(0 8px 6px rgba(0,0,0,0.1));
+    }
+    @keyframes float {
+      0% { transform: translateY(0px) translateX(0) rotate(0deg); }
+      100% { transform: translateY(-60px) translateX(30px) rotate(12deg); }
+    }
+
+    /* preloader */
+    #preloader {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #fce4f0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s;
+    }
+    .dark-mode #preloader { background: #2a1f2c; }
+    .progress-bar {
+      width: 280px; height: 22px; background: #ffe1ec; border-radius: 40px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(140, 70, 110, 0.4);
+      border: 1px solid white;
+    }
+    .progress-fill {
+      width: 0%; height: 100%; background: linear-gradient(90deg, #ff8eb5, #ffb0cc); border-radius: 40px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #2d1323; font-weight: bold; font-size: 1rem;
+    }
+
+    /* SURPRISE COVER */
+    #surpriseCover {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 235, 245, 0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 2rem;
+      cursor: pointer;
+      transition: opacity 0.5s;
+      box-shadow: 0 0 50px #f9b8d4 inset;
+    }
+    .cover-content {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 90px;
+      padding: 2.5rem 3rem;
+      border: 4px solid white;
+      box-shadow: 0 40px 60px rgba(190, 100, 150, 0.5);
+      max-width: 700px;
+      width: 90%;
+      animation: gentlePulse 3s infinite ease-in-out;
+    }
+    @keyframes gentlePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    .cover-emoji { font-size: 6rem; filter: drop-shadow(0 10px 10px #d68faa); margin-bottom: 0.5rem; }
+    .cover-title { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #b13e75; line-height: 1.2; }
+    .cover-sub { font-size: 1.8rem; margin: 1rem 0 1.8rem; font-weight: 300; }
+    .cover-tap { background: #ffafcc; border-radius: 60px; padding: 1rem 2.5rem; display: inline-block; font-size: 2rem; font-weight: 700; box-shadow: 0 8px 0 #c96f94, 0 12px 28px #fbb0d0; border: 2px solid white; }
+
+    /* main container */
+    #content {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1.2rem 4rem;
+      display: none;
+    }
+
+    /* glassmorphism */
+    .glass-card {
+      background: rgba(255, 245, 250, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 56px;
+      padding: 2.2rem 1.8rem;
+      margin: 2.2rem 0;
+      box-shadow: 0 30px 45px -20px rgba(150, 90, 130, 0.6), 0 0 0 1.5px rgba(255,255,255,0.8) inset;
+      border: 1px solid rgba(255, 240, 250, 0.9);
+    }
+    body.dark-mode .glass-card {
+      background: rgba(30, 20, 35, 0.7);
+      box-shadow: 0 30px 45px -20px #120914, 0 0 0 1.5px #b987b5 inset;
+    }
+
+    h1, h2, h3 { font-family: 'Dancing Script', cursive; font-weight: 700; letter-spacing: 0.5px; }
+    h1 { font-size: 4rem; color: #b13e75; text-shadow: 3px 3px 0 #ffe2f0; }
+    h2 { font-size: 3.2rem; color: #9b5096; margin-bottom: 1.2rem; }
+    .subhead { font-size: 1.5rem; font-weight: 400; }
+
+    button, .btn {
+      background: #ffafcc; border: none; color: #2d1223; font-weight: 700; padding: 14px 32px; border-radius: 60px; font-size: 1.3rem; cursor: pointer; box-shadow: 0 8px 0 #c96f94, 0 14px 28px rgba(220, 100, 150, 0.6); transition: all 0.1s; border: 2px solid #fff2fa; margin: 0.4rem;
+    }
+    button:active { transform: translateY(8px); box-shadow: 0 4px 0 #c96f94, 0 8px 20px #ffa8c8; }
+
+    /* special buttons for question */
+    #yesBtn, #noBtn {
+      font-size: 2rem;
+      padding: 15px 40px;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+    #noBtn {
+      background: #ff9f9f;
+      box-shadow: 0 8px 0 #b45f6b;
+    }
+
+    /* music toggle + audio player */
+    .music-toggle {
+      background: #ffffffdd; backdrop-filter: blur(10px); border-radius: 50px; padding: 0.5rem 1.5rem 0.5rem 1rem; display: inline-flex; align-items: center; gap: 12px; border: 1.5px solid white; box-shadow: 0 8px 24px #dbb6cc; font-size: 1.2rem; font-weight: 600; cursor: pointer;
+    }
+    #birthdayMusic {
+      max-width: 250px; height: 40px; border-radius: 40px; background: rgba(255,255,240,0.7); border: 1px solid white; box-shadow: 0 4px 12px #e2b0c2;
+    }
+    body.dark-mode #birthdayMusic { background: #5a4458; }
+
+    /* cake svg */
+    .cake-image svg {
+      width: 240px; height: auto; filter: drop-shadow(0 24px 20px #c4789b); transition: 0.2s; cursor: pointer;
+    }
+
+    /* ----- PLAY & DISCOVER (balloons + gifts) RESPONSIVE FIXES ----- */
+    .balloon-modern {
+      background: radial-gradient(circle at 30% 30%, #ffb3c6, #ff7b9c);
+      border-radius: 80% 80% 60% 60%;
+      width: 95px; height: 115px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      box-shadow: -5px 12px 0 #b1476b, 0 12px 25px rgba(0,0,0,0.3);
+      position: relative;
+      margin: 12px 8px;
+      transition: 0.1s;
+      cursor: pointer;
+      border: 3px solid white;
+    }
+    .balloon-modern:after {
+      content: '';
+      position: absolute;
+      bottom: -22px;
+      width: 2px;
+      height: 45px;
+      background: #a77c8a;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 2px dashed #ad6d89;
+    }
+    .balloon-modern.popped { visibility: hidden; }
+
+    .gift-box-real {
+      background: #fdd0e2;
+      width: 130px; height: 130px;
+      border-radius: 35px 35px 45px 45px;
+      position: relative;
+      box-shadow: 0 18px 0 #bb799b, 0 24px 34px #d698b4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      border: 4px solid white;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .gift-box-real:before {
+      content: '';
+      position: absolute;
+      width: 80%;
+      height: 22px;
+      background: #f0a9c4;
+      top: 35px;
+      border-radius: 30px;
+      box-shadow: 0 6px 0 #a15e7e;
+    }
+    .gift-box-real.opened { transform: rotate(2deg) scale(0.95); filter: brightness(1.05); box-shadow: 0 8px 0 #bb799b; }
+
+    /* flip cards */
+    .flip-card-modern {
+      width: 200px; height: 230px; perspective: 2000px; cursor: pointer;
+    }
+    .flip-inner {
+      position: relative; width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; border-radius: 45px; box-shadow: 0 30px 30px #d6a7bc;
+    }
+    .flip-card-modern.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 45px; padding: 1.2rem; display: flex; align-items: center; justify-content: center; background: #ffecf5; border: 4px solid white; font-size: 1.4rem; font-weight: 600; text-align: center;
+    }
+    .flip-back { transform: rotateY(180deg); background: #ffe3f0; color: #a13f6b; }
+
+    /* countdown - responsive */
+    #countdownTimer {
+      font-size: 3rem;
+      font-weight: 700;
+      background: #ffeef5;
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border-radius: 80px;
+      box-shadow: 0 8px 0 #cf8fb0, 0 15px 25px #f6c8da;
+      border: 3px solid white;
+      max-width: 100%;
+      word-break: break-word;
+      text-align: center;
+    }
+
+    /* instagram */
+    .insta-card {
+      background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 90px; padding: 2.2rem 3.5rem; display: inline-block; border: 3px solid white; box-shadow: 0 25px 35px #d5a7bd;
+    }
+    .insta-caption {
+      font-size: 1.8rem; font-family: 'Dancing Script', cursive; color: #b14d7a; margin-bottom: 0.5rem;
+    }
+    body.dark-mode .insta-caption { color: #fbc1db; }
+
+    /* secret star */
+    .secret-star {
+      position: absolute; font-size: 2.8rem; color: #fadb56; filter: drop-shadow(0 0 18px #ffb700); cursor: pointer; z-index: 50; transition: 0.2s; pointer-events: all;
+    }
+
+    /* toast */
+    .secret-toast {
+      position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #381f33; color: #ffdef5; padding: 16px 32px; border-radius: 60px; z-index: 300; box-shadow: 0 15px 35px black; animation: fadeUp 2.2s forwards; pointer-events: none; font-size: 1.4rem; border: 2px solid #ffb7d2;
+    }
+    @keyframes fadeUp { 0% { opacity:0; bottom:20px; } 15%{ opacity:1; bottom:60px; } 85%{ opacity:1; bottom:60px; } 100%{ opacity:0; bottom:100px; } }
+
+    /* scroll progress */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 10px; background: linear-gradient(90deg, #ff80a5, #c767d1); width: 0%; z-index: 200; border-radius: 10px; box-shadow: 0 0 16px #ffb0d0;
+    }
+
+    /* ----- MOBILE RESPONSIVE (enhanced) ----- */
+    @media (max-width: 700px) {
+      h1 { font-size: 3.2rem; }
+      h2 { font-size: 2.8rem; }
+      .glass-card { padding: 2rem 1.2rem; border-radius: 45px; }
+      /* Play & discover scaling */
+      .balloon-modern { width: 80px; height: 100px; font-size: 2.2rem; margin: 8px 5px; }
+      .gift-box-real { width: 110px; height: 110px; font-size: 3rem; }
+      .flip-card-modern { width: 170px; height: 200px; }
+      .insta-card { padding: 1.8rem 2.5rem; }
+      .cover-title { font-size: 2.8rem; }
+      .cover-tap { font-size: 1.8rem; padding: 0.8rem 2rem; }
+      #yesBtn, #noBtn { font-size: 1.8rem; padding: 12px 30px; }
+    }
+    @media (max-width: 500px) {
+      h1 { font-size: 2.8rem; }
+      h2 { font-size: 2.4rem; }
+      .glass-card { padding: 1.5rem 1rem; }
+      /* Smaller balloons and gifts */
+      .balloon-modern { width: 70px; height: 90px; font-size: 2rem; margin: 6px 3px; }
+      .gift-box-real { width: 90px; height: 90px; font-size: 2.5rem; }
+      .flip-card-modern { width: 140px; height: 170px; }
+      .flip-front, .flip-back { font-size: 1.2rem; }
+      /* Countdown scaling */
+      #countdownTimer { font-size: 2rem; padding: 0.8rem 1.5rem; }
+      .insta-card { padding: 1.2rem 1.8rem; }
+      .insta-caption { font-size: 1.3rem; }
+      button, .btn { font-size: 1rem; padding: 10px 18px; }
+      #birthdayMusic { max-width: 100%; width: 100%; }
+      .cover-emoji { font-size: 4.5rem; }
+      .cover-title { font-size: 2.4rem; }
+      .cover-sub { font-size: 1.4rem; }
+      .cover-tap { font-size: 1.5rem; }
+      #yesBtn, #noBtn { font-size: 1.6rem; padding: 10px 20px; }
+    }
+    @media (max-width: 380px) {
+      .balloon-modern { width: 60px; height: 80px; font-size: 1.8rem; margin: 4px 2px; }
+      .gift-box-real { width: 75px; height: 75px; font-size: 2.2rem; }
+      #countdownTimer { font-size: 1.6rem; padding: 0.6rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="preloader">
+    <p style="font-family: 'Dancing Script'; font-size: 2.4rem;">loading Priyanshi's magic...</p>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill">❤️</div>
+    </div>
+  </div>
+
+  <!-- SURPRISE COVER -->
+  <div id="surpriseCover">
+    <div class="cover-content">
+      <div class="cover-emoji">🎁✨</div>
+      <div class="cover-title">A Secret Surprise</div>
+      <div class="cover-sub">for Priyanshi's 18th</div>
+      <div class="cover-tap"><i class="fa-regular fa-hand-point-up"></i> Tap to open</div>
+    </div>
+  </div>
+
+  <div class="floating-bg" id="floatingBg"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- AUDIO PLAYER (local file) -->
+  <div style="position: sticky; top: 5px; z-index: 150; display: flex; justify-content: center; margin: 0 10px;">
+    <audio id="birthdayMusic" loop preload="auto" controls style="width: 100%; max-width: 400px; border-radius: 60px; background: #ffeef7; padding: 5px 10px; box-shadow: 0 6px 18px #dbb6cc;">
+      <source src="Priyanshi_s_Birthday_Bash.mp3" type="audio/mpeg">
+      Your browser does not support the audio element. Please download the song "Priyanshi_s_Birthday_Bash.mp3" and place it in the same folder.
+    </audio>
+  </div>
+
+  <div id="content">
+    <!-- top controls -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 1.5rem;">
+      <div class="music-toggle" id="musicToggle">
+        <i class="fa-solid fa-music" style="color:#b13e75;"></i> <span id="musicText">🎵 play music</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" id="darkToggle" style="padding: 8px 18px;"><i class="fa-regular fa-moon"></i> dark</button>
+        <button class="btn" id="shareBtn" style="background: #c79ad3;"><i class="fa-regular fa-share-from-square"></i> share</button>
+      </div>
+    </div>
+
+    <!-- HERO with interactive cake SVG -->
+    <section class="glass-card" style="text-align: center;">
+      <div class="cake-image" id="cakeImage">
+        <svg width="280" height="240" viewBox="0 0 300 250" style="margin:0 auto;">
+          <rect x="70" y="140" width="160" height="50" rx="20" fill="#f9b8c4" stroke="#fff" stroke-width="4" />
+          <rect x="90" y="100" width="120" height="45" rx="15" fill="#f9a3b8" stroke="#fff" stroke-width="4" />
+          <rect x="110" y="60" width="80" height="45" rx="15" fill="#f58ba7" stroke="#fff" stroke-width="4" />
+          <path d="M110 60 L120 45 L180 45 L190 60" fill="#ffe0f0" stroke="#fff" stroke-width="3"/>
+          <circle cx="150" cy="38" r="12" fill="#fcf2d7" stroke="#fff" stroke-width="3" />
+          <rect x="142" y="15" width="16" height="30" fill="#fae3b7" stroke="#fff" stroke-width="2" rx="4" />
+          <path id="flamePath" class="flame" d="M150 8 Q156 0 162 8 Q156 16 150 8" fill="#ffae42" stroke="#ff8400" stroke-width="2" cursor="pointer" />
+        </svg>
+      </div>
+      <h1>Happy 18th, Priyanshi! 🎉✨</h1>
+      <div class="subhead">Even from far away, I wanted to make your day special.</div>
+      <button id="startJourney">✨ Start the Birthday Journey ✨</button>
+    </section>
+
+    <!-- ===== INTERACTIVE QUESTION CARD ===== -->
+    <section class="glass-card" id="journeySection">
+      <h2>🤔 A Quick Question 🤔</h2>
+      <div style="font-size: 2.2rem; margin: 2rem 0; font-family: 'Dancing Script', cursive;">Are you bauni or not?</div>
+      <div style="display: flex; gap: 30px; justify-content: center; align-items: center; flex-wrap: wrap; position: relative; min-height: 120px;">
+        <button id="yesBtn" style="font-size: 2rem; padding: 15px 40px;">Yes</button>
+        <button id="noBtn" style="font-size: 2rem; padding: 15px 40px; background: #ff9f9f;">No</button>
+      </div>
+    </section>
+
+    <!-- flip compliments -->
+    <section class="glass-card">
+      <h2>💕 little truths 💕</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        <div class="flip-card-modern" onclick="this.classList.toggle('flipped'); playSound('pop')"><div class="flip-inner"><div class="flip-front">✨</div><div class="flip-back">You have a really positive vibe ✨</div></div></div>
+        <div class="flip-card-modern" onclick="this.classList.toggle('flipped'); playSound('pop')"><div class="flip-inner"><div class="flip-front">😆</div><div class="flip-back">You're fun to talk to 😆</div></div></div>
+        <div class="flip-card-modern" onclick="this.classList.toggle('flipped'); playSound('pop')"><div class="flip-inner"><div class="flip-front">😎</div><div class="flip-back">Bauni ab badi hogyiii partyyy...🤙🏻 😎</div></div></div>
+      </div>
+    </section>
+
+    <!-- balloon pop + gift boxes (play & discover) -->
+    <section class="glass-card">
+      <h2>🎈 play & discover 🎁</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        <div style="flex: 1; min-width: 260px; text-align: center;">
+          <h3>pop balloons</h3>
+          <div id="balloonArea" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"> </div>
+          <p id="balloonMsg" style="font-size:1.4rem; margin-top:1rem; min-height: 3rem;">💫</p>
+        </div>
+        <div style="flex: 1; min-width: 260px; text-align: center;">
+          <h3>open a gift</h3>
+          <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;" id="giftArea">
+            <div class="gift-box-real" data-gift="0">🎁</div>
+            <div class="gift-box-real" data-gift="1">🎁</div>
+            <div class="gift-box-real" data-gift="2">🎁</div>
+          </div>
+          <p id="giftMsg" style="font-size:1.4rem; background: #ffdbeb; border-radius: 60px; padding: 0.8rem 1.2rem; margin-top: 1rem;">✨</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- countdown (birthday magic loading) -->
+    <section class="glass-card" id="countdownCard">
+      <h2 id="countdownHead">⏳ birthday magic loading...</h2>
+      <div id="countdownTimer">--</div>
+    </section>
+
+    <!-- INSTAGRAM with personal caption -->
+    <section class="glass-card" style="text-align:center;">
+      <div class="insta-card">
+        <div class="insta-caption"><i class="fa-regular fa-heart"></i> from me to you <i class="fa-regular fa-heart"></i></div>
+        <i class="fa-brands fa-instagram" style="font-size:4rem; color:#c42d8c; margin:0.2rem 0;"></i>
+        <h3 style="font-size:2.8rem; margin:0;">@pri_4uever</h3>
+        <button onclick="window.open('https://instagram.com/pri_4uever', '_blank'); playSound('chime'); confetti({particleCount:60, spread:80});" style="margin-top:1rem;">💌 Send Her Love 💌</button>
+      </div>
+    </section>
+
+    <!-- cake cutting / blow candle -->
+    <section class="glass-card" style="text-align:center;">
+      <h2>🎂 make a wish 🎂</h2>
+      <div style="font-size:5.5rem;" id="cakeEmoji">🍰</div>
+      <button id="cutCakeBtn">Cut the cake / blow candle</button>
+      <p id="cakeWish" style="font-size:2rem; margin-top:1rem;"></p>
+    </section>
+
+    <!-- emotional message -->
+    <section style="background: #fde7f0; border-radius: 70px; padding: 2.5rem 1.8rem; text-align: center; margin: 3rem 0; border: 4px solid white; box-shadow: 0 25px 35px #cfa5bd;">
+      <p style="font-size:2.2rem; font-family:'Dancing Script';">Even though we're not in the same city, I wanted you to feel special today. Keep smiling, keep shining, and enjoy your 18th birthday 🎉💖</p>
+      <button id="replayBtn" onclick="location.reload();"><i class="fa-regular fa-clock"></i> Replay surprise 🔁</button>
+    </section>
+  </div>
+
+  <script>
+    (function() {
+      // Preloader
+      let width = 0;
+      const fill = document.getElementById('progressFill');
+      const preloader = document.getElementById('preloader');
+      const content = document.getElementById('content');
+      const surpriseCover = document.getElementById('surpriseCover');
+      const interval = setInterval(() => {
+        width += 3;
+        if (width >= 100) {
+          width = 100;
+          clearInterval(interval);
+          preloader.style.opacity = 0;
+          setTimeout(() => { 
+            preloader.style.display = 'none'; 
+            content.style.display = 'block';
+            surpriseCover.style.display = 'flex';
+          }, 500);
+        }
+        fill.style.width = width + '%';
+        if (width % 20 === 0) fill.innerHTML += '❤️';
+      }, 60);
+
+      // Sound effects
+      let audioCtx, soundEnabled = true;
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+      window.playSound = function(type) {
+        if (!soundEnabled || !audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        gain.gain.value = 0.12;
+        if (type === 'pop') { osc.frequency.value = 620; osc.start(); osc.stop(0.09); }
+        if (type === 'chime') { osc.frequency.value = 880; osc.start(); osc.stop(0.13); }
+      };
+
+      // Background music
+      const music = document.getElementById('birthdayMusic');
+      const musicToggle = document.getElementById('musicToggle');
+      const musicText = document.getElementById('musicText');
+      let musicPlaying = false;
+      music.addEventListener('play', () => { musicPlaying = true; musicText.innerText = '🎵 pause music'; });
+      music.addEventListener('pause', () => { musicPlaying = false; musicText.innerText = '🎵 play music'; });
+      musicToggle.addEventListener('click', () => {
+        if (music.paused) {
+          music.play().catch(e => alert('Please make sure the music file "Priyanshi_s_Birthday_Bash.mp3" is in the same folder.'));
+        } else {
+          music.pause();
+        }
+      });
+
+      // SURPRISE COVER click
+      surpriseCover.addEventListener('click', function() {
+        surpriseCover.style.opacity = '0';
+        setTimeout(() => { surpriseCover.style.display = 'none'; }, 400);
+        confetti({particleCount: 200, spread: 100, origin: {y:0.6}});
+        playSound('chime');
+      });
+
+      // Dark mode
+      document.getElementById('darkToggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+      });
+
+      // Scroll progress
+      window.addEventListener('scroll', () => {
+        let st = document.documentElement.scrollTop;
+        let sh = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById('scroll-progress').style.width = (st/sh)*100 + '%';
+      });
+
+      // ===== INTERACTIVE QUESTION CARD (mobile optimized) =====
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+
+      // Yes button: show alert
+      yesBtn.addEventListener('click', () => {
+        alert('You lost, gadhi 😂');
+        playSound('chime');
+        confetti({particleCount: 50, spread: 70, origin: {y:0.5}});
+      });
+
+      // Function to move No button – mobile-optimized
+      function moveNoButton() {
+        const btn = noBtn;
+        const winWidth = window.innerWidth;
+        const winHeight = window.innerHeight;
+        const btnWidth = btn.offsetWidth;
+        const btnHeight = btn.offsetHeight;
+
+        const maxLeft = winWidth - btnWidth - 10;
+        const maxTop = winHeight - btnHeight - 10;
+        let left = Math.max(10, Math.min(maxLeft, Math.random() * maxLeft));
+        let top = Math.max(10, Math.min(maxTop, Math.random() * maxTop));
+
+        // Avoid overlapping Yes button (up to 5 attempts)
+        const yesRect = yesBtn.getBoundingClientRect();
+        let attempts = 0;
+        while (attempts < 5) {
+          const overlap = !(left + btnWidth < yesRect.left || 
+                            left > yesRect.right || 
+                            top + btnHeight < yesRect.top || 
+                            top > yesRect.bottom);
+          if (!overlap) break;
+          left = Math.max(10, Math.min(maxLeft, Math.random() * maxLeft));
+          top = Math.max(10, Math.min(maxTop, Math.random() * maxTop));
+          attempts++;
+        }
+
+        btn.style.position = 'fixed';
+        btn.style.left = left + 'px';
+        btn.style.top = top + 'px';
+        btn.style.zIndex = '9999';
+        btn.style.transition = 'all 0.2s ease';
+        btn.style.transform = '';
+      }
+
+      noBtn.addEventListener('mouseenter', moveNoButton);
+      noBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        moveNoButton();
+      });
+      noBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        moveNoButton();
+      });
+
+      window.addEventListener('resize', () => {
+        if (noBtn.style.position === 'fixed') {
+          const left = parseFloat(noBtn.style.left) || 0;
+          const top = parseFloat(noBtn.style.top) || 0;
+          const btnWidth = noBtn.offsetWidth;
+          const btnHeight = noBtn.offsetHeight;
+          const winWidth = window.innerWidth;
+          const winHeight = window.innerHeight;
+
+          let newLeft = left, newTop = top;
+          if (newLeft + btnWidth > winWidth - 10) newLeft = winWidth - btnWidth - 10;
+          if (newTop + btnHeight > winHeight - 10) newTop = winHeight - btnHeight - 10;
+          if (newLeft < 10) newLeft = 10;
+          if (newTop < 10) newTop = 10;
+
+          noBtn.style.left = newLeft + 'px';
+          noBtn.style.top = newTop + 'px';
+        }
+      });
+
+      // Balloon game (touch & click friendly)
+      function initBalloons() {
+        const area = document.getElementById('balloonArea');
+        const msgs = ["✨ you're a star", "💖 so loved", "🎈 18 & free", "🌸 keep shining", "😄 laughter", "💫 dreamer", "🌙 beautiful", "🌟 special", "🍰 baaki ke exams aache jaaye..."];
+        for (let i=0; i<9; i++) {
+          let b = document.createElement('div');
+          b.className = 'balloon-modern';
+          b.innerText = '🎈';
+          b.dataset.msg = msgs[i % msgs.length];
+          b.onclick = function() {
+            if (b.classList.contains('popped')) return;
+            b.classList.add('popped'); playSound('pop'); confetti({particleCount:18, spread:45, origin: {x:Math.random(), y:0.6}});
+            document.getElementById('balloonMsg').innerText = '💬 ' + b.dataset.msg;
+          };
+          // Ensure touch works
+          b.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            b.click();
+          });
+          area.appendChild(b);
+        }
+      }
+
+      // Gift boxes
+      function initGifts() {
+        const gifts = document.querySelectorAll('.gift-box-real');
+        const giftMsgs = ["🎀 you're a treasure", "🍰 have a sweet year", "💌 you are adored", "🌟 18 looks magic", "💖 positivity flows", "🎉 celebrate you"];
+        gifts.forEach((g) => {
+          g.addEventListener('click', () => {
+            if (g.classList.contains('opened')) return;
+            g.classList.add('opened'); playSound('chime'); confetti({particleCount:40, spread:70});
+            document.getElementById('giftMsg').innerText = '🎁 ' + giftMsgs[Math.floor(Math.random() * giftMsgs.length)];
+          });
+          // touch support
+          g.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            g.click();
+          });
+        });
+      }
+
+      // Countdown (updates every minute)
+      function startCountdown() {
+        const head = document.getElementById('countdownHead');
+        const timer = document.getElementById('countdownTimer');
+        function update() {
+          const now = new Date();
+          const bday = new Date(now.getFullYear(), 1, 23);
+          if (now > bday) bday.setFullYear(bday.getFullYear() + 1);
+          const diff = bday - now;
+          if (now.getDate() === 23 && now.getMonth() === 1) {
+            head.innerText = "🎉 IT'S YOUR BIRTHDAY!!! 🎉💖";
+            timer.innerText = "🥳  FEB 23  🥳";
+            confetti({particleCount:250, spread:130});
+            return;
+          }
+          const days = Math.floor(diff/(1000*60*60*24));
+          const hrs = Math.floor((diff/(1000*60*60))%24);
+          const mins = Math.floor((diff/(1000*60))%60);
+          timer.innerText = `${days}d ${hrs}h ${mins}m`;
+        }
+        update();
+        setInterval(update, 60000);
+      }
+
+      // Candle blow
+      const flame = document.getElementById('flamePath');
+      if (flame) {
+        flame.addEventListener('click', () => {
+          flame.classList.add('extinguished');
+          playSound('chime');
+          confetti({particleCount:90, spread:90, origin: {y:0.5}});
+          showToast('💨 you blew the candle! make a wish 💫');
+        });
+      }
+
+      // Cake cut button
+      document.getElementById('cutCakeBtn').addEventListener('click', () => {
+        document.getElementById('cakeWish').innerText = '🍰 wish come true! 🍰';
+        playSound('chime');
+        confetti({particleCount:140, spread:110});
+      });
+
+      // Easter eggs stars
+      function scatterStars() {
+        const secrets = ["⭐ you found a secret wish", "😄 hope this made you smile", "🌟 you're a superstar", "💖 18 forever", "🎈 keep flying"];
+        for (let i=0; i<10; i++) {
+          let star = document.createElement('div');
+          star.className = 'secret-star';
+          star.innerHTML = '⭐';
+          star.style.left = Math.random() * 90 + '%';
+          star.style.top = Math.random() * 300 + 300 + 'px';
+          star.onclick = function() {
+            showToast(secrets[Math.floor(Math.random()*secrets.length)]);
+            playSound('chime');
+            confetti({particleCount:35, spread:60});
+            star.remove();
+          };
+          document.body.appendChild(star);
+        }
+      }
+
+      function showToast(t) {
+        let toast = document.createElement('div'); toast.className = 'secret-toast'; toast.innerText = t;
+        document.body.appendChild(toast);
+        setTimeout(()=> toast.remove(), 2300);
+      }
+
+      // Share fallback
+      document.getElementById('shareBtn').addEventListener('click', ()=>{
+        if (navigator.share) navigator.share({title:'Priyanshi 18', text:'made for you with love', url:window.location.href});
+        else alert('✨ share this page with Priyanshi! ✨');
+      });
+
+      // Scroll to journey
+      document.getElementById('startJourney').addEventListener('click', ()=>{
+        document.getElementById('journeySection').scrollIntoView({behavior:'smooth'});
+      });
+
+      function initAll() {
+        initBalloons();
+        initGifts();
+        startCountdown();
+        scatterStars();
+        // Floating background
+        let bg = document.getElementById('floatingBg');
+        for (let i=0;i<16;i++) {
+          let d = document.createElement('div'); d.className='float-item';
+          d.innerHTML = ['🎈','❤️','🧁','✨','🌸','🕯️','🎂','💖'][Math.floor(Math.random()*8)];
+          d.style.left = Math.random()*100+'%'; d.style.top = Math.random()*100+'%';
+          d.style.animationDelay = Math.random()*12+'s';
+          bg.appendChild(d);
+        }
+        document.body.addEventListener('click', function enable() {
+          if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        }, { once: true });
+      }
+    })();
+  </script>
+</body>
+</html>
